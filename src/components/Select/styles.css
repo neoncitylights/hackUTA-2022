@@ -1,0 +1,23 @@
+#downshift-1-menu {
+	display: flex;
+	position: absolute;
+	flex-direction: column;
+	gap: .5rem;
+	overflow-y: scroll;
+
+	padding: .5rem;
+	margin: 0;
+
+	background: #fff;
+	list-style: none;
+    box-shadow: inset 5em 1em gold;
+}
+
+#downshift-1-menu li {
+	display: flex;
+	flex-direction: column;
+}
+
+.select-item-license {
+	color: gray;
+}

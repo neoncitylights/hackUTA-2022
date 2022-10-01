@@ -5,7 +5,15 @@ body {
 
 .app-filter {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 1rem;
+  gap: .5rem;
+}
+
+.app-filters {
+  display: flex;
+  gap: .5rem;
 }
 
 /* search */

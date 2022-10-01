@@ -1,9 +1,11 @@
-import { Pool, PoolClient } from 'pg';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import pg from 'pg';
+import type { PoolClient } from 'pg';
+import dotenv from 'dotenv';
+const { Pool } = pg;
 
 const ClientLeakDurationMs = 5000; // 5 seconds
+
+dotenv.config();
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
