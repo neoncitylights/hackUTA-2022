@@ -1,0 +1,48 @@
+
+.item {
+	display: inline-flex;
+	flex-direction: row;
+	gap: .5rem;
+	padding: 1rem 1.5rem;
+	background: #fff;
+	border-radius: .25rem;
+}
+
+.icon {
+	margin-top: .5rem;
+}
+
+.external-link {
+	color: blue;
+	height: 1.25rem;
+	width: 1.25rem;
+}
+
+.item-header {
+	display: flex;
+	flex-direction: row;
+	gap: .125rem;
+	justify-content: space-between;
+}
+
+.item-content {
+	display: flex;
+	flex-direction: column;
+	gap: .125rem;
+}
+
+.item-title {
+	font-size: 1rem;
+}
+
+.item-subtitle {
+	color: gray;
+}
+
+.item-license {
+	display: inline-flex;
+	padding: .25rem .75rem;
+	border: 1px solid #ccc;
+	border-radius: 1rem;
+	font-size: .875rem;
+}
