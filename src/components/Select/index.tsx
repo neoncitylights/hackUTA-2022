@@ -35,7 +35,7 @@ export function SelectExample({items, selectTitle, updateData}: SelectProps) {
 			<ul
 				{...getMenuProps()}
 				className="select-filter-dropdown">
-				{isOpen && items.map((item, index) => (
+				{items.map((item, index) => (
 				<li
 					className={classNames(
 						highlightedIndex === index && 'select-item-highlighted',
@@ -53,7 +53,6 @@ export function SelectExample({items, selectTitle, updateData}: SelectProps) {
 	}
 
 	React.useEffect(() => {
-		console.log("This is ran")
 		if(selectedItem)
 			updateData(selectedItem.title);
 	})

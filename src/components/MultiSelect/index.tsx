@@ -8,9 +8,10 @@ export type Item = { title: string };
 export type MultipleComboBoxProps = {
   items: Item[],
   selectTitle: string,
+  updateData: (query: string) => void,
 }
 
-export function MultipleComboBoxExample({items}: MultipleComboBoxProps) {
+export function MultipleComboBoxExample({items, updateData}: MultipleComboBoxProps) {
     const initialSelectedItems: Item[] = []
   
     function getFilteredBooks(selectedItems: Item[], inputValue: string) {
@@ -83,18 +84,26 @@ export function MultipleComboBoxExample({items}: MultipleComboBoxProps) {
               return changes
           }
         },
-        onStateChange({
+        onInputValueChange(params) {
+          console.log('FUCK', params)
+        },
+        onStateChange(params) {
+          const {
           inputValue: newInputValue,
           type,
           selectedItem: newSelectedItem,
-        }) {
+        } = params
+          console.log('STATE CHANGE', params)
           switch (type) {
             case useCombobox.stateChangeTypes.InputKeyDownEnter:
             case useCombobox.stateChangeTypes.ItemClick:
               setSelectedItems([...selectedItems!, newSelectedItem!])
               break
             case useCombobox.stateChangeTypes.InputChange:
+            case useCombobox.stateChangeTypes.ControlledPropUpdatedSelectedItem:
+              // console.log('newInputValue', newInputValue)
               setInputValue(newInputValue as string)
+              console.log('newInputValue', newInputValue)
               break
             default:
               break
@@ -126,7 +135,13 @@ export function MultipleComboBoxExample({items}: MultipleComboBoxProps) {
           return <></>;
         }
       }
-  
+
+      React.useEffect(() => {
+        console.log(inputValue)
+        if(inputValue)
+          updateData(inputValue);
+      })
+      
       return (
         <div className="multiselect">
           <div className="multiselect-input">
@@ -179,5 +194,6 @@ export function MultipleComboBoxExample({items}: MultipleComboBoxProps) {
         </div>
       )
     }
+
     return <MultipleComboBox />
 }

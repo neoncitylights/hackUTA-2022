@@ -1,12 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import * as Collapsible from '@radix-ui/react-collapsible';
-import { ItemCard } from './components/ItemCard';
-import { Item, SelectExample } from './components/Select';
-import { MultipleComboBoxExample } from './components/MultiSelect';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import './App.css';
-import { BellIcon } from '@radix-ui/react-icons';
 import ReactDOM from 'react-dom';
 import {
   BrowserRouter as Router,
@@ -14,7 +7,14 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { BellIcon } from '@radix-ui/react-icons';
 import Fuse from 'fuse.js';
+import { ItemCard } from './components/ItemCard';
+import { Item, SelectExample } from './components/Select';
+import { MultipleComboBoxExample } from './components/MultiSelect';
+import './App.css';
+// @ts-ignore
+import undrawImage from './undraw_illustration.svg';
 
 function Header() {
   return (
@@ -47,19 +47,19 @@ function Home() {
       }))).json();
       setSources(sources);
 
-      const licenses = await (await (fetch("/api/licenses", {
+      const licenses: string[] = await (await (fetch("/api/licenses", {
         headers: { Accept: 'application/json' },
         mode: 'cors',
       }))).json();
-      setLicenses(licenses);
+      setLicenses(['Licenses', ...licenses]);
 
-      const origins = await (await (fetch("/api/origins", {
+      const origins: string[] = await (await (fetch("/api/origins", {
         headers: { Accept: 'application/json' },
         mode: 'cors',
       }))).json();
-      setOrigins(origins);
+      setOrigins(['Authors', ...origins]);
 
-      const applications = await (await (fetch("/api/applications", {
+      const applications: string[] = await (await (fetch("/api/applications", {
         headers: { Accept: 'application/json' },
         mode: 'cors',
       }))).json();
@@ -95,12 +95,15 @@ function Home() {
   let originsMap: Item[] = origins.map((val) => {
     return { title: val }
   });
-  let applicationsMap: Item[] = applications.map((val) => {
-    return { title: val }
-  });
 
   return (
     <section className="app-content">
+      <img src={undrawImage} className="illustration" width="200px" />
+      <h1>R&D Data Inventory</h1>
+      <span className="project-desc">
+        <span>Where students and researchers go to learn.</span>
+        <span>Use them for your <mark>machine learning</mark> models, <mark>research</mark> papers, and general education.</span>
+      </span>
       <section className="app-filter">
         <input id="search-input" className="search" type="search" placeholder="Find a dataset. Research and learn." onChange={(e) => {
           searchItem(e.target.value)
@@ -108,7 +111,7 @@ function Home() {
         <section className="app-filters">
           <SelectExample selectTitle='Licenses' items={licensesMap} updateData={searchItem}/>
           <SelectExample selectTitle='Authors' items={originsMap} updateData={searchItem}/>
-          <MultipleComboBoxExample selectTitle='Applications' items={applications.map(v => ({ title: v }))} />
+          <MultipleComboBoxExample selectTitle='Applications' items={applications.map(v => ({ title: v }))} updateData={searchItem} />
         </section>
       </section>
       <main className="main-content">

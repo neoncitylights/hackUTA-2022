@@ -12,6 +12,22 @@ export type ItemProps = {
 	applications: string,
 };
 
+export function truncateStringMiddle(
+	value: string,
+	maxLength: number,
+	separator: string = '\u2026'
+): string {
+	if (value.length <= maxLength) { return value; }
+
+	const charsToShow = maxLength - separator.length;
+	const frontChars = Math.ceil(charsToShow/2);
+	const backChars = Math.floor(charsToShow/2);
+
+	return value.substr(0, frontChars) +
+		separator +
+		value.substr(value.length - backChars);
+}
+
 export function ItemCard({ title, subtitle, description, license, url, applications }: ItemProps) {
 	let desc: string = description ? description : '';
 	// if(desc.length === 0) {
@@ -60,11 +76,11 @@ export function ItemCard({ title, subtitle, description, license, url, applicati
 				<ul className="statistics">
 					<li className="stat-field">
 						<span className="stat-field-label">License</span>
-						<span className="item-tag license" title="License">{license}</span>
+						<span className="item-tag license" title={license}>{truncateStringMiddle(license, 20)}</span>
 					</li>
 					<li className="stat-field">
 						<span className="stat-field-label">Application</span>
-						<span className="item-tag application" title="Application">{applications}</span>
+						<span className="item-tag application" title={applications}>{applications}</span>
 					</li>
 				</ul>
 			</div>
