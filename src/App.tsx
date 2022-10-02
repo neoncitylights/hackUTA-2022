@@ -36,7 +36,8 @@ function Home() {
   const [sources, setSources] = useState<Source[]>([])
   const [licenses, setLicenses] = useState<string[]>([])
   const [origins, setOrigins] = useState<string[]>([])
-  const [searchData, setSearchData] = useState<Source[]>([]);
+  const [searchData, setSearchData] = useState<Source[]>([])
+
   useEffect(() => {
     void (async () => {
       const sources: Source[] = await (await (fetch("/api/source", {
@@ -61,23 +62,24 @@ function Home() {
       // console.log(origins);
 
       // const searchItem = (query) => {
-        // if (!query) {
-        //   setSearchData(sources);
-        //   return;
-        // }
-        const fuse = new Fuse<Source>(sources, {
-          keys: ["licenses", "origins"]
+      // if (!query) {
+      //   setSearchData(sources);
+      //   return;
+      // }
+      const fuse = new Fuse<Source>(sources, {
+        keys: ["name"]
+      });
+      const result = fuse.search('CC', { limit: 100 });
+      console.log(result);
+      const finalResult: Source[] = [];
+      if (result.length) {
+        result.forEach(result => {
+          finalResult.push(result.item);
         });
-        const result = fuse.search("license");
-        const finalResult: Source[] = [];
-        if (result.length) {
-          result.forEach(result => {
-            finalResult.push(result.item);
-          });
-          setSearchData(finalResult);
-        } else {
-          setSearchData(sources);
-        }
+        setSearchData(finalResult);
+      } else {
+        setSearchData(sources);
+      }
       // };
 
     })();
@@ -133,22 +135,13 @@ function Admin() {
     <main id="admin-main">
       <h1>Admin Page</h1>
       <section>
-        <h2>Execute SQL Statement</h2>
-        <textarea onChange={v => setSqlQuery(v.target.value)}></textarea><br />
-        <button onClick={async () => {
-          const response = await fetch(`/api/execute-sql/${encodeURIComponent(sqlQuery)}`, {
-            method: 'GET',
-            headers: { Accept: 'application/json' },
-          })
-          const data = await response.json();
-          if (data.success) {
-            setSqlOutput(JSON.stringify(data, undefined, '\t'))
-          } else {
-            alert(`Failed executing SQL: ${data.message}`)
-          }
-        }}>Execute</button><br />
-        <div className="sql-output">{sqlOutput || 'No SQL output.'}</div>
+        <h2>Send Update</h2>
+        <form action="/api/send-update" method="POST">
+
+          <button>Send Update</button>
+        </form>
       </section>
+      <hr />
       <section>
         <h2>Load Sources</h2>
         <p>Paste in a CSV formatted string with columns "Name,URL,License,Origin".</p>
@@ -173,6 +166,24 @@ function Admin() {
             alert(`Failed to load sources: ${data.message}`);
           }
         }}>Load</button>
+      </section>
+      <hr />
+      <section>
+        <h2>Execute SQL Statement</h2>
+        <textarea onChange={v => setSqlQuery(v.target.value)}></textarea><br />
+        <button onClick={async () => {
+          const response = await fetch(`/api/execute-sql/${encodeURIComponent(sqlQuery)}`, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+          })
+          const data = await response.json();
+          if (data.success) {
+            setSqlOutput(JSON.stringify(data, undefined, '\t'))
+          } else {
+            alert(`Failed executing SQL: ${data.message}`)
+          }
+        }}>Execute</button><br />
+        <div className="sql-output">{sqlOutput || 'No SQL output.'}</div>
       </section>
     </main>
   );

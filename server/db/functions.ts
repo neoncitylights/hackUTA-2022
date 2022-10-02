@@ -21,6 +21,17 @@ export async function createTables(): Promise<void> {
             application VARCHAR(256),
             PRIMARY KEY (source_name, application)
         )`,
+        `CREATE TABLE IF NOT EXISTS subscriptions (
+            source_name VARCHAR(256) REFERENCES sources(name),
+            phone_number VARCHAR(16),
+            PRIMARY KEY (source_name, email)
+        )`,
+        `CREATE TABLE IF NOT EXISTS updates (
+            id SERIAL PRIMARY KEY,
+            source_name VARCHAR(256) REFERENCES sources(name),
+            timestamp TIMESTAMP NOT NULL,
+            details VARCHAR(1024) NOT NULL
+        )`
     ];
 
     await Promise.all(statements.map(s => client.query(s)));

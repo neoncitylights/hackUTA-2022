@@ -22,7 +22,7 @@ void (async () => {
             .post('/api/load-sources', async (req, res) => {
                 try {
                     if (typeof req.body === 'object' && typeof req.body.csv_content === 'string' && typeof req.body.override_existing === 'boolean') {
-                        if (req.body.csv_content.startsWith('Name,URL,License,Origin')) {
+                        if (req.body.csv_content.match(/^Name,URL,License,Origin[\n\r]/)) {
                             await loadSources(req.body.csv_content, req.body.override_existing);
                             res.json({ success: true })
                         } else {
