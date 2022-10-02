@@ -1,16 +1,16 @@
 import React from "react";
 import { useCombobox, useMultipleSelection } from "downshift";
 import classNames from "classnames";
-import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons';
+import { Cross1Icon, ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import './styles.css';
 
-export type Item = { subtitle: string, title: string };
+export type Item = { title: string };
 export type MultipleComboBoxProps = {
   items: Item[],
   selectTitle: string,
 }
 
-export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxProps) {
+export function MultipleComboBoxExample({items}: MultipleComboBoxProps) {
     const initialSelectedItems: Item[] = []
   
     function getFilteredBooks(selectedItems: Item[], inputValue: string) {
@@ -19,8 +19,7 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
       return items.filter(function filterBook(book) {
         return (
           !selectedItems.includes(book) &&
-          (book.title.toLowerCase().includes(lowerCasedInputValue) ||
-            book.subtitle.toLowerCase().includes(lowerCasedInputValue))
+          (book.title.toLowerCase().includes(lowerCasedInputValue))
         )
       })
     }
@@ -119,7 +118,7 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
                   key={`${item.title}${index}`}
                   {...getItemProps({item, index})}>
                   <span>{item.title}</span>
-                  <span className="text-sm text-gray-700">{item.subtitle}</span>
+                  {/* <span className="text-sm text-gray-700">{item.subtitle}</span> */}
                 </li>
               ))}
           </ul>);
@@ -153,18 +152,19 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
                           removeSelectedItem(selectedItemForRender)
                           }}
                       >
-                          &#10005;
+                         <Cross1Icon/>
                       </span>
                       </span>
               )
             })}
             </div>
             <div className="flex gap-0.5 grow" {...getComboboxProps()}>
-              <input
+              {/* <input
                 placeholder={selectTitle}
                 className="w-full"
                 {...getInputProps(getDropdownProps({preventKeyAction: isOpen}))}
-              />
+              /> */}
+              <span className="w-full">Applications</span>
               <button
                 aria-label="toggle menu"
                 className="multiselect-filter-button"

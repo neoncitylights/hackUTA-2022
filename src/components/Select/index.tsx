@@ -26,6 +26,7 @@ export function SelectExample({items, selectTitle}: SelectProps) {
 		itemToString,
 	})
 
+
 	const renderSelectDropdown = () => {
 		if(isOpen) {
 			return (
@@ -58,6 +59,7 @@ export function SelectExample({items, selectTitle}: SelectProps) {
 					type="button"
 					{...getToggleButtonProps()}>
 					<span>{selectedItem ? selectedItem.title : selectTitle}</span>
+					{/* {selectedItem ? propertySet(selectedItem.title) : propertySet('')} */}
 					<span className="px-2">{isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
 				</button>
 			</div>

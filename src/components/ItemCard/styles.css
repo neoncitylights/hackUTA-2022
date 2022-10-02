@@ -61,3 +61,13 @@
 	border-radius: 1rem;
 	font-size: .875rem;
 }
+
+.item-application {
+	display: inline-flex;
+	padding: .25rem .75rem;
+	background: #fecee7;
+	border: 1px solid #ff0090;
+	border-radius: 1rem;
+	font-size: .875rem;
+	margin: .5rem;
+}

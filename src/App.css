@@ -72,14 +72,15 @@ body {
 }
 
 #admin-main textarea {
-  height: 8em;
+  height: 16em;
   width: 95vw;
 }
 
 #admin-main .sql-output {
   border: 1px solid black;
+  font: 1em monospace;
   padding: 0.5em;
-  max-height: 8em;
+  height: 24em;
   margin: 0.5em;
   overflow: auto;
   white-space: pre;

@@ -24,7 +24,7 @@ export async function createTables(): Promise<void> {
         `CREATE TABLE IF NOT EXISTS subscriptions (
             source_name VARCHAR(256) REFERENCES sources(name),
             phone_number VARCHAR(16),
-            PRIMARY KEY (source_name, email)
+            PRIMARY KEY (source_name, phone_number)
         )`,
         `CREATE TABLE IF NOT EXISTS updates (
             id SERIAL PRIMARY KEY,
@@ -41,9 +41,15 @@ export async function createTables(): Promise<void> {
 export async function loadSources(csvText: string, overrideExisting: boolean): Promise<void> {
     const rows = await parseCsv(csvText);
     if (overrideExisting) {
-        await query('DELETE FROM origins; DELETE FROM sources');
+        await query(
+            `DELETE FROM applications;
+            DELETE FROM origins;
+            DELETE FROM subscriptions;
+            DELETE FROM updates;
+            DELETE FROM sources;`
+        );
     }
-    await bulkInsert('sources', ['name', 'url', 'license'], rows.map(r => r.slice(0, 3)))
+    await bulkInsert('sources', ['name', 'url', 'license'], rows.map(row => row.slice(0, 3)))
 
     const originRows: [string, string][] = []
     for (const row of rows) {
@@ -54,14 +60,26 @@ export async function loadSources(csvText: string, overrideExisting: boolean): P
     }
     await bulkInsert('origins', ['source_name', 'origin'], originRows)
 
+    const applicationRows: [string, string][] = []
+    for (const row of rows) {
+        const applications = row[4].split(/,\s*/);
+        for (const application of applications) {
+            applicationRows.push([row[0], application]);
+        }
+    }
+    await bulkInsert('applications', ['source_name', 'application'], applicationRows)
+
     async function parseCsv(text: string): Promise<string[][]> {
         const ans: string[][] = [];
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             Readable
                 .from(text)
-                .pipe(csv({ headers: false, skipLines: 1 }))
+                .pipe(csv())
                 .on('data', (row) => {
-                    ans.push(Array.from({ ...row, length: Object.keys(row).length }));
+                    if (!(row.Name && row.URL && row.License && row.Origin && row.Applications)) {
+                        reject(new Error(`Bad row: ${JSON.stringify(row)}`));
+                    }
+                    ans.push([row.Name, row.URL, row.License, row.Origin, row.Applications]);
                 })
                 .on('end', () => {
                     resolve(ans)

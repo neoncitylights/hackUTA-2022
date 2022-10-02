@@ -32,10 +32,11 @@ function Header() {
 }
 
 function Home() {
-  type Source = { name: string, url?: string, license?: string, description?: string, origins: string }
+  type Source = { name: string, url?: string, license?: string, description?: string, origin: string, application: string }
   const [sources, setSources] = useState<Source[]>([])
   const [licenses, setLicenses] = useState<string[]>([])
   const [origins, setOrigins] = useState<string[]>([])
+  const [applications, setApplications] = useState<string[]>([])
   const [searchData, setSearchData] = useState<Source[]>([])
 
   useEffect(() => {
@@ -61,29 +62,35 @@ function Home() {
       setOrigins(origins);
       // console.log(origins);
 
-      // const searchItem = (query) => {
-      // if (!query) {
-      //   setSearchData(sources);
-      //   return;
-      // }
-      const fuse = new Fuse<Source>(sources, {
-        keys: ["name"]
-      });
-      const result = fuse.search('CC', { limit: 100 });
-      console.log(result);
-      const finalResult: Source[] = [];
-      if (result.length) {
-        result.forEach(result => {
-          finalResult.push(result.item);
-        });
-        setSearchData(finalResult);
-      } else {
-        setSearchData(sources);
-      }
-      // };
+      const applications = await (await (fetch("/api/applications", {
+        headers: { Accept: 'application/json' },
+        mode: 'cors',
+      }))).json();
+      setApplications(applications);
 
+      setSearchData(sources);
     })();
   }, []);
+
+  const searchItem = (query: string) => {
+    if (!query) {
+      setSearchData(sources);
+      return;
+    }
+    const fuse = new Fuse<Source>(sources, {
+      keys: ["name", "license", "origin", "application"],
+    });
+    const result = fuse.search(query);
+    const finalResult: Source[] = [];
+    if (result.length) {
+      result.forEach(result => {
+        finalResult.push(result.item);
+      });
+      setSearchData(finalResult);
+    } else {
+      setSearchData(sources);
+    }
+  };
 
   let licensesMap: Item[] = licenses.map((val) => {
     return { title: val }
@@ -91,19 +98,20 @@ function Home() {
   let originsMap: Item[] = origins.map((val) => {
     return { title: val }
   });
+  let applicationsMap: Item[] = applications.map((val) => {
+    return { title: val }
+  });
 
   return (
     <section className="app-content">
       <section className="app-filter">
-        <input className="search" type="search" placeholder="Find a dataset. Research and learn." />
+        <input id="search-input" className="search" type="search" placeholder="Find a dataset. Research and learn." onChange={(e) => {
+          searchItem(e.target.value)
+        }} />
         <section className="app-filters">
           <SelectExample selectTitle='Licenses' items={licensesMap} />
           <SelectExample selectTitle='Authors' items={originsMap} />
-          <MultipleComboBoxExample selectTitle='Applications' items={[
-            { subtitle: 'Google', title: 'Google LLC' },
-            { subtitle: 'Something', title: 'Title of Something' },
-            { subtitle: 'Best DB', title: 'Duckie' },
-          ]} />
+          <MultipleComboBoxExample selectTitle='Applications' items={applications.map(v => ({ title: v }))} />
         </section>
       </section>
       <main className="main-content">
@@ -111,10 +119,11 @@ function Home() {
           {Object.values(searchData).map((item, i) => (
             <ItemCard
               title={item.name}
-              subtitle={item.origins ?? ''}
+              subtitle={item.origin ?? ''}
               description={item.description ?? ''}
               license={item.license ?? ''}
-              url={item.url ?? ''} />
+              url={item.url ?? ''}
+              applications={item.application ?? ''} />
           ))}
         </section>
       </main>
@@ -131,27 +140,43 @@ function Admin() {
   const [sqlOutput, setSqlOutput] = useState<string>('');
   const [csvInput, setCsvInput] = useState<string>('');
   const [overrideSource, setOverrideSource] = useState<boolean>(false);
+  const [updateSource, setUpdateSource] = useState<string>('');
+  const [updateDetails, setUpdateDetails] = useState<string>('');
   return (
     <main id="admin-main">
       <h1>Admin Page</h1>
       <section>
         <h2>Send Update</h2>
-        <form action="/api/send-update" method="POST">
-
-          <button>Send Update</button>
-        </form>
+        <label>Source: <input type="text" onChange={v => setUpdateSource(v.target.value)} /></label><br />
+        <label>Details: <textarea onChange={v => setUpdateDetails(v.target.value)} ></textarea></label><br />
+        <button type="button" onClick={async () => {
+          const response = await fetch('/api/admin/send-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              source_name: updateSource,
+              details: updateDetails,
+            })
+          });
+          const data = await response.json();
+          if (data.success) {
+            alert(`Sent update to ${data.total_sent} phones!`);
+          } else {
+            alert(`Failed to send update: ${data.message}`);
+          }
+        }}>Send Update</button>
       </section>
       <hr />
       <section>
         <h2>Load Sources</h2>
-        <p>Paste in a CSV formatted string with columns "Name,URL,License,Origin".</p>
+        <p>Paste in a CSV formatted string with columns "Name", "URL", "Origin", "License", and "Applications".</p>
         <textarea onChange={v => setCsvInput(v.target.value)}></textarea><br />
         <label>
           <input id="load-source-override-checkbox" type="checkbox" onChange={v => setOverrideSource(v.target.checked)} />
           Override existing sources
         </label><br />
         <button onClick={async () => {
-          const response = await fetch('/api/load-sources', {
+          const response = await fetch('/api/admin/load-sources', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -172,15 +197,16 @@ function Admin() {
         <h2>Execute SQL Statement</h2>
         <textarea onChange={v => setSqlQuery(v.target.value)}></textarea><br />
         <button onClick={async () => {
-          const response = await fetch(`/api/execute-sql/${encodeURIComponent(sqlQuery)}`, {
+          setSqlOutput('Executing...');
+          const response = await fetch(`/api/admin/execute-sql/${encodeURIComponent(sqlQuery)}`, {
             method: 'GET',
             headers: { Accept: 'application/json' },
           })
           const data = await response.json();
           if (data.success) {
-            setSqlOutput(JSON.stringify(data, undefined, '\t'))
+            setSqlOutput(JSON.stringify(data, undefined, 3))
           } else {
-            alert(`Failed executing SQL: ${data.message}`)
+            setSqlOutput(`Failed: ${data.message}`);
           }
         }}>Execute</button><br />
         <div className="sql-output">{sqlOutput || 'No SQL output.'}</div>
