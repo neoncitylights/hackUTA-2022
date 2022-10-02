@@ -19,7 +19,7 @@ import undrawImage from './undraw_illustration.svg';
 function Header() {
   return (
     <header className="header">
-      <span className="header-logo">R&D Data Inventory</span>
+      <span className="header-logo">Datageddon</span>
       <nav className="header-nav">
         <ul className="header-nav-items">
           <li className="nav-item"><BellIcon width={24} height={24} /></li>
@@ -75,7 +75,10 @@ function Home() {
       return;
     }
     const fuse = new Fuse<Source>(sources, {
-      keys: ["name", "license", "origin", "application"],
+      keys: [{name: 'name', weight: 2},
+             {name: 'license', weight: 0.5},
+             "origin",
+             "application"],
     });
     const result = fuse.search(query);
     const finalResult: Source[] = [];
@@ -99,7 +102,7 @@ function Home() {
   return (
     <section className="app-content">
       <img src={undrawImage} className="illustration" width="200px" />
-      <h1>R&D Data Inventory</h1>
+      <h1>Datageddon</h1>
       <span className="project-desc">
         <span>Where students and researchers go to learn.</span>
         <span>Use them for your <mark>machine learning</mark> models, <mark>research</mark> papers, and general education.</span>

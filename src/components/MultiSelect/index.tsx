@@ -84,9 +84,6 @@ export function MultipleComboBoxExample({items, updateData}: MultipleComboBoxPro
               return changes
           }
         },
-        onInputValueChange(params) {
-          console.log('FUCK', params)
-        },
         onStateChange(params) {
           const {
           inputValue: newInputValue,
@@ -179,14 +176,13 @@ export function MultipleComboBoxExample({items, updateData}: MultipleComboBoxPro
                 className="w-full"
                 {...getInputProps(getDropdownProps({preventKeyAction: isOpen}))}
               /> */}
-              <span className="w-full">Applications</span>
               <button
                 aria-label="toggle menu"
                 className="multiselect-filter-button"
                 type="button"
                 {...getToggleButtonProps()}
               >
-                {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                Applications {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </button>
             </div>
           </div>
