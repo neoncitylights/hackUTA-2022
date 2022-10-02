@@ -1,15 +1,18 @@
 import classNames from "classnames";
 import { useSelect } from 'downshift';
 import './styles.css';
+import React from 'react';
+
 import { ChevronUpIcon, ChevronDownIcon} from '@radix-ui/react-icons';
 
 export type Item = { title: string };
 export type SelectProps = {
 	items: Item[],
 	selectTitle: string,
+	updateData: (query: string) => void,
 }
 
-export function SelectExample({items, selectTitle}: SelectProps) {
+export function SelectExample({items, selectTitle, updateData}: SelectProps) {
 	function itemToString(item: Item|null): string {
 		return item ? item.title : ''
 	}
@@ -25,7 +28,6 @@ export function SelectExample({items, selectTitle}: SelectProps) {
 		items: items,
 		itemToString,
 	})
-
 
 	const renderSelectDropdown = () => {
 		if(isOpen) {
@@ -50,6 +52,12 @@ export function SelectExample({items, selectTitle}: SelectProps) {
 		}
 	}
 
+	React.useEffect(() => {
+		console.log("This is ran")
+		if(selectedItem)
+			updateData(selectedItem.title);
+	})
+
 	return (
 		<div className="select">
 			<div className="select-filter">
@@ -59,7 +67,6 @@ export function SelectExample({items, selectTitle}: SelectProps) {
 					type="button"
 					{...getToggleButtonProps()}>
 					<span>{selectedItem ? selectedItem.title : selectTitle}</span>
-					{/* {selectedItem ? propertySet(selectedItem.title) : propertySet('')} */}
 					<span className="px-2">{isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
 				</button>
 			</div>

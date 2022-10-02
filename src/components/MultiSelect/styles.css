@@ -21,14 +21,39 @@
 }
 
 .multiselect-container {
-	display: inline-flex;
-	padding: .25rem .75rem;
-	background: #fff;
-	border: 1px solid #ccc;
-	font-size: .875rem;
+	display: flex;
 	flex-direction: column;
+
+	padding: .5rem;
+	margin-top: 2.5rem;
+
 	position: absolute;
-	margin-top: 2rem;
+	overflow-y: scroll;
+	scroll-behavior: smooth;
+	max-height: 250px;
+
+	background: #fff;
+	box-shadow:
+		6.7px 6.7px 5.3px rgba(0, 0, 0, 0.02),
+		22.3px 22.3px 17.9px rgba(0, 0, 0, 0.03),
+		100px 100px 80px rgba(0, 0, 0, 0.05);
+	border: 1px solid #ccc;
+	border-radius: .25rem;
+	font-size: .875rem;
+}
+
+.multiselect-container li {
+	display: flex;
+	flex-direction: column;
+	cursor: pointer;
+	padding: .5rem;
+	border-radius: .25rem;
+	transition: .125s;
+}
+
+.multiselect-container li:hover {
+	background: #cee7fe;
+	font-weight: 500;
 }
 
 .selected-items-horizontal {

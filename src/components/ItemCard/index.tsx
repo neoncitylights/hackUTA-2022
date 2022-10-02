@@ -1,6 +1,7 @@
 import React from 'react';
-import { FaceIcon, CheckIcon, HamburgerMenuIcon, ExternalLinkIcon, BellIcon } from '@radix-ui/react-icons';
+import { ExternalLinkIcon, BellIcon, LayersIcon } from '@radix-ui/react-icons';
 import './styles.css';
+//import UrlMetadata from 'url-metadata';
 
 export type ItemProps = {
 	title: string,
@@ -12,9 +13,16 @@ export type ItemProps = {
 };
 
 export function ItemCard({ title, subtitle, description, license, url, applications }: ItemProps) {
+	let desc: string = description ? description : '';
+	// if(desc.length === 0) {
+	// 	let metadata = getMetadata(url).then((data) => {
+	// 		desc = data.description as string;
+	// 	});
+	// }
+
 	return (
 		<section className="item">
-			<FaceIcon className="icon" />
+			<LayersIcon className="icon" />
 			<div className="content">
 				<header className="item-header">
 					<div className="item-content">
@@ -49,8 +57,16 @@ export function ItemCard({ title, subtitle, description, license, url, applicati
 					</div>
 				</header>
 				<p className="item-description">{description}</p>
-				<span className="item-license" title="License">{license}</span>
-				<p className="item-application" title="Application">{applications}</p>
+				<ul className="statistics">
+					<li className="stat-field">
+						<span className="stat-field-label">License</span>
+						<span className="item-tag license" title="License">{license}</span>
+					</li>
+					<li className="stat-field">
+						<span className="stat-field-label">Application</span>
+						<span className="item-tag application" title="Application">{applications}</span>
+					</li>
+				</ul>
 			</div>
 		</section>
 	);

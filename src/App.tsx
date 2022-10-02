@@ -46,21 +46,18 @@ function Home() {
         mode: 'cors',
       }))).json();
       setSources(sources);
-      // console.log(sources);
 
       const licenses = await (await (fetch("/api/licenses", {
         headers: { Accept: 'application/json' },
         mode: 'cors',
       }))).json();
       setLicenses(licenses);
-      // console.log(licenses);
 
       const origins = await (await (fetch("/api/origins", {
         headers: { Accept: 'application/json' },
         mode: 'cors',
       }))).json();
       setOrigins(origins);
-      // console.log(origins);
 
       const applications = await (await (fetch("/api/applications", {
         headers: { Accept: 'application/json' },
@@ -109,8 +106,8 @@ function Home() {
           searchItem(e.target.value)
         }} />
         <section className="app-filters">
-          <SelectExample selectTitle='Licenses' items={licensesMap} />
-          <SelectExample selectTitle='Authors' items={originsMap} />
+          <SelectExample selectTitle='Licenses' items={licensesMap} updateData={searchItem}/>
+          <SelectExample selectTitle='Authors' items={originsMap} updateData={searchItem}/>
           <MultipleComboBoxExample selectTitle='Applications' items={applications.map(v => ({ title: v }))} />
         </section>
       </section>
