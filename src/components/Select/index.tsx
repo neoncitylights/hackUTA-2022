@@ -9,10 +9,11 @@ export type Item = { title: string };
 export type SelectProps = {
 	items: Item[],
 	selectTitle: string,
+	nothingSelected: string,
 	updateData: (query: string) => void,
 }
 
-export function SelectExample({items, selectTitle, updateData}: SelectProps) {
+export function SelectExample({items, selectTitle, nothingSelected, updateData}: SelectProps) {
 	function itemToString(item: Item|null): string {
 		return item ? item.title : ''
 	}
@@ -53,9 +54,12 @@ export function SelectExample({items, selectTitle, updateData}: SelectProps) {
 	}
 
 	React.useEffect(() => {
-		if(selectedItem)
+		console.log(selectedItem);
+		if(selectedItem && selectedItem.title !== nothingSelected)
 			updateData(selectedItem.title);
-	})
+		else
+			updateData('');
+	}, [selectedItem])
 
 	return (
 		<div className="select">

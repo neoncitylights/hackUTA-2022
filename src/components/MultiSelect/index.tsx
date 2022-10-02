@@ -84,23 +84,20 @@ export function MultipleComboBoxExample({items, updateData}: MultipleComboBoxPro
               return changes
           }
         },
-        onStateChange(params) {
-          const {
+        onStateChange({
           inputValue: newInputValue,
           type,
           selectedItem: newSelectedItem,
-        } = params
-          console.log('STATE CHANGE', params)
+        }) {
           switch (type) {
             case useCombobox.stateChangeTypes.InputKeyDownEnter:
             case useCombobox.stateChangeTypes.ItemClick:
-              setSelectedItems([...selectedItems!, newSelectedItem!])
+              const newAllSelectedItems = [...selectedItems!, newSelectedItem!]
+              setSelectedItems(newAllSelectedItems)
+              setInputValue(newAllSelectedItems.map(v => v.title).join('|'))
               break
             case useCombobox.stateChangeTypes.InputChange:
-            case useCombobox.stateChangeTypes.ControlledPropUpdatedSelectedItem:
-              // console.log('newInputValue', newInputValue)
               setInputValue(newInputValue as string)
-              console.log('newInputValue', newInputValue)
               break
             default:
               break
@@ -134,7 +131,6 @@ export function MultipleComboBoxExample({items, updateData}: MultipleComboBoxPro
       }
 
       React.useEffect(() => {
-        console.log(inputValue)
         if(inputValue)
           updateData(inputValue);
       })
@@ -147,6 +143,7 @@ export function MultipleComboBoxExample({items, updateData}: MultipleComboBoxPro
               selectedItemForRender,
               index,
             ) {
+              console.log('renderSelectedItem', selectedItemForRender)
               return (
                       <span
                       className="selected-item"

@@ -15,11 +15,13 @@ import { MultipleComboBoxExample } from './components/MultiSelect';
 import './App.css';
 // @ts-ignore
 import undrawImage from './undraw_illustration.svg';
+// @ts-ignore
+import datageddonLogo from './datageddon-logo.png';
 
 function Header() {
   return (
     <header className="header">
-      <span className="header-logo">Datageddon</span>
+      <span className="header-logo"><img src={datageddonLogo} height="48px"/></span>
       <nav className="header-nav">
         <ul className="header-nav-items">
           <li className="nav-item"><BellIcon width={24} height={24} /></li>
@@ -68,7 +70,7 @@ function Home() {
       setSearchData(sources);
     })();
   }, []);
-
+  
   const searchItem = (query: string) => {
     if (!query) {
       setSearchData(sources);
@@ -76,8 +78,8 @@ function Home() {
     }
     const fuse = new Fuse<Source>(sources, {
       keys: [{name: 'name', weight: 2},
-             {name: 'license', weight: 0.5},
-             "origin",
+             {name: 'license', weight: .5},
+             {name: 'origin', weight: .5},
              "application"],
     });
     const result = fuse.search(query);
@@ -101,20 +103,24 @@ function Home() {
 
   return (
     <section className="app-content">
-      <img src={undrawImage} className="illustration" width="200px" />
-      <h1>Datageddon</h1>
-      <span className="project-desc">
-        <span>Where students and researchers go to learn.</span>
-        <span>Use them for your <mark>machine learning</mark> models, <mark>research</mark> papers, and general education.</span>
-      </span>
-      <section className="app-filter">
+      <section className="app-content-header">
+        <img src={undrawImage} className="illustration" width="300px" />
+        <section className="app-content-header-text">
+          <h1>Datageddon</h1>
+          <span className="project-desc">
+            <span>Where students and researchers go to learn.</span>
+            <span>Use them for your <mark>machine learning</mark> models, <mark>research</mark> papers, and general education.</span>
+          </span>
+          <section className="app-filter">
         <input id="search-input" className="search" type="search" placeholder="Find a dataset. Research and learn." onChange={(e) => {
           searchItem(e.target.value)
         }} />
         <section className="app-filters">
-          <SelectExample selectTitle='Licenses' items={licensesMap} updateData={searchItem}/>
-          <SelectExample selectTitle='Authors' items={originsMap} updateData={searchItem}/>
+          <SelectExample selectTitle='Licenses' items={licensesMap} nothingSelected={licenses[0]} updateData={searchItem} />
+          <SelectExample selectTitle='Authors' items={originsMap} nothingSelected={origins[0]} updateData={searchItem} />
           <MultipleComboBoxExample selectTitle='Applications' items={applications.map(v => ({ title: v }))} updateData={searchItem} />
+        </section>
+      </section>
         </section>
       </section>
       <main className="main-content">
