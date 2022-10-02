@@ -57,3 +57,30 @@ body {
   flex-wrap: wrap;
   justify-content: center;
 }
+
+#admin-main {
+  padding: 0.5em;
+}
+
+#admin-main button {
+  font-size: 1em;
+  padding: 0.5em;
+}
+
+#admin-main h2 {
+  margin: 0.5em 0;
+}
+
+#admin-main textarea {
+  height: 8em;
+  width: 95vw;
+}
+
+#admin-main .sql-output {
+  border: 1px solid black;
+  padding: 0.5em;
+  max-height: 8em;
+  margin: 0.5em;
+  overflow: auto;
+  white-space: pre;
+}

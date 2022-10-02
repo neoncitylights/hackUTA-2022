@@ -1,4 +1,4 @@
-import { getClient } from './infra.js';
+import { getClient, query } from './infra.js';
 import csv from 'csv-parser';
 import { Readable } from 'stream';
 
@@ -27,42 +27,28 @@ export async function createTables(): Promise<void> {
     client.release();
 }
 
-export async function loadSources(text: string): Promise<void> {
-    const client = await getClient();
+export async function loadSources(csvText: string, overrideExisting: boolean): Promise<void> {
+    const rows = await parseCsv(csvText);
+    if (overrideExisting) {
+        await query('DELETE FROM origins; DELETE FROM sources');
+    }
+    await bulkInsert('sources', ['name', 'url', 'license'], rows.map(r => r.slice(0, 3)))
 
-    const rows = await parseCsv(text);
-    await client.query('DELETE FROM sources');
-    await client.query('DELETE FROM origins');
+    const originRows: [string, string][] = []
     for (const row of rows) {
-        console.log(row);
-        await client.query(
-            `INSERT INTO sources (name, url, license)
-             VALUES ($1, $2, $3)`, row.slice(0, 3)
-        );
         const origins = row[3].split(/,\s*/);
         for (const origin of origins) {
-            await client.query(
-                `INSERT INTO origins (source_name, origin)
-                VALUES ($1, $2)`, [row[0], origin]
-            )
+            originRows.push([row[0], origin]);
         }
     }
-    // await Promise.all(rows.map(row => {
-    //     console.log(row)
-    //     client.query(
-    //         `INSERT INTO sources (name, url, license, description)
-    //         VALUES ($1, $2, $3, $4)`, row
-    //     )
-    // }))
-
-    client.release();
+    await bulkInsert('origins', ['source_name', 'origin'], originRows)
 
     async function parseCsv(text: string): Promise<string[][]> {
         const ans: string[][] = [];
         return new Promise(resolve => {
             Readable
                 .from(text)
-                .pipe(csv({ headers: false }))
+                .pipe(csv({ headers: false, skipLines: 1 }))
                 .on('data', (row) => {
                     ans.push(Array.from({ ...row, length: Object.keys(row).length }));
                 })
@@ -71,4 +57,15 @@ export async function loadSources(text: string): Promise<void> {
                 })
         });
     }
+}
+
+export async function bulkInsert(table: string, columns: string[], rows: string[][]): Promise<void> {
+    let placeholderIndex = 1;
+    const placeholders: string = rows.map(
+        _ => '(' + columns.map(_ => `$${placeholderIndex++}`).join(', ') + ')'
+    ).join(', ');
+    await query(
+        `INSERT INTO ${table} (${columns.join(',')}) VALUES ${placeholders}`,
+        rows.flat()
+    );
 }

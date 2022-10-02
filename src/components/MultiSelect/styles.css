@@ -1,3 +1,6 @@
+.multiselect {
+	display: flex;
+}
 .multiselect-input {
 	display: inline-flex;
 	padding: .25rem .75rem;
@@ -11,9 +14,10 @@
 .multiselect-filter-button {
 	-webkit-appearance: none;
 	appearance: none;
-	display: flex;
+	background: #fff;
+	border: none;
+	display: inline-block;
 	gap: .5rem;
-
 }
 
 .multiselect-container {
@@ -21,9 +25,21 @@
 	padding: .25rem .75rem;
 	background: #fff;
 	border: 1px solid #ccc;
-	border-radius: 1rem;
 	font-size: .875rem;
 	flex-direction: column;
+	position: absolute;
+	margin-top: 2rem;
+}
+
+.selected-items-horizontal {
+	flex-direction: row;
+	max-width: 250px;
+	white-space:nowrap;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+	scroll-behavior: smooth;
+
 }
 
 .selected-item {

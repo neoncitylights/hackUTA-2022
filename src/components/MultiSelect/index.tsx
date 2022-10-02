@@ -1,7 +1,7 @@
 import React from "react";
 import { useCombobox, useMultipleSelection } from "downshift";
 import classNames from "classnames";
-import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { ChevronUpIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import './styles.css';
 
 export type Item = { subtitle: string, title: string };
@@ -109,8 +109,7 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
           <ul
             {...getMenuProps()}
             className="multiselect-container">
-            {isOpen &&
-              items.map((item, index) => (
+            {items.map((item, index) => (
                 <li
                   className={classNames(
                     highlightedIndex === index && 'bg-blue-300',
@@ -132,6 +131,7 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
       return (
         <div className="multiselect">
           <div className="multiselect-input">
+            <div className="selected-items-horizontal">
             { selectedItems.map(function renderSelectedItem(
               selectedItemForRender,
               index,
@@ -158,6 +158,7 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
                       </span>
               )
             })}
+            </div>
             <div className="flex gap-0.5 grow" {...getComboboxProps()}>
               <input
                 placeholder={selectTitle}
@@ -170,7 +171,7 @@ export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxPr
                 type="button"
                 {...getToggleButtonProps()}
               >
-                <ChevronDownIcon />
+                {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </button>
             </div>
           </div>
