@@ -4,31 +4,23 @@ import classNames from "classnames";
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import './styles.css';
 
-type Item = { author: string, title: string };
+export type Item = { subtitle: string, title: string };
+export type MultipleComboBoxProps = {
+  items: Item[],
+  selectTitle: string,
+}
 
-export function MultipleComboBoxExample() {
-    const books: Item[] = [
-      {author: 'Harper Lee', title: 'To Kill a Mockingbird'},
-      {author: 'Lev Tolstoy', title: 'War and Peace'},
-      {author: 'Fyodor Dostoyevsy', title: 'The Idiot'},
-      {author: 'Oscar Wilde', title: 'A Picture of Dorian Gray'},
-      {author: 'George Orwell', title: '1984'},
-      {author: 'Jane Austen', title: 'Pride and Prejudice'},
-      {author: 'Marcus Aurelius', title: 'Meditations'},
-      {author: 'Fyodor Dostoevsky', title: 'The Brothers Karamazov'},
-      {author: 'Lev Tolstoy', title: 'Anna Karenina'},
-      {author: 'Fyodor Dostoevsky', title: 'Crime and Punishment'},
-    ]
-    const initialSelectedItems: Item[] = [books[0], books[1]]
+export function MultipleComboBoxExample({items, selectTitle}: MultipleComboBoxProps) {
+    const initialSelectedItems: Item[] = []
   
     function getFilteredBooks(selectedItems: Item[], inputValue: string) {
       const lowerCasedInputValue = inputValue.toLowerCase()
   
-      return books.filter(function filterBook(book) {
+      return items.filter(function filterBook(book) {
         return (
           !selectedItems.includes(book) &&
           (book.title.toLowerCase().includes(lowerCasedInputValue) ||
-            book.author.toLowerCase().includes(lowerCasedInputValue))
+            book.subtitle.toLowerCase().includes(lowerCasedInputValue))
         )
       })
     }
@@ -110,56 +102,13 @@ export function MultipleComboBoxExample() {
           }
         },
       })
-  
-      return (
-        <div className="multiselect">
-          <div className="multiselect-input">
-              { selectedItems.map(function renderSelectedItem(
-                selectedItemForRender,
-                index,
-              ) {
-                return (
-                    
-                        <span
-                        className="selected-item"
-                        key={`selected-item-${index}`}
-                        {...getSelectedItemProps({
-                            selectedItem: selectedItemForRender,
-                            index,
-                        })}
-                        >
-                        {selectedItemForRender.title}
-                        <span
-                            className="px-1 cursor-pointer"
-                            onClick={e => {
-                            e.stopPropagation()
-                            removeSelectedItem(selectedItemForRender)
-                            }}
-                        >
-                            &#10005;
-                        </span>
-                        </span>
-                )
-              })}
-              <div className="flex gap-0.5 grow" {...getComboboxProps()}>
-                <input
-                  placeholder="Applications"
-                  className="w-full"
-                  {...getInputProps(getDropdownProps({preventKeyAction: isOpen}))}
-                />
-                <button
-                  aria-label="toggle menu"
-                  className="px-2"
-                  type="button"
-                  {...getToggleButtonProps()}
-                >
-                <ChevronDownIcon />
-                </button>
-            </div>
-          </div>
+
+      const renderMultiSelectContainer = () => {
+        if(isOpen) {
+          return (
           <ul
             {...getMenuProps()}
-            className="absolute p-0 bg-white shadow-md max-h-80 overflow-scroll w-inherit">
+            className="multiselect-container">
             {isOpen &&
               items.map((item, index) => (
                 <li
@@ -171,10 +120,61 @@ export function MultipleComboBoxExample() {
                   key={`${item.title}${index}`}
                   {...getItemProps({item, index})}>
                   <span>{item.title}</span>
-                  <span className="text-sm text-gray-700">{item.author}</span>
+                  <span className="text-sm text-gray-700">{item.subtitle}</span>
                 </li>
               ))}
-          </ul>
+          </ul>);
+        } else {
+          return <></>;
+        }
+      }
+  
+      return (
+        <div className="multiselect">
+          <div className="multiselect-input">
+            { selectedItems.map(function renderSelectedItem(
+              selectedItemForRender,
+              index,
+            ) {
+              return (
+                      <span
+                      className="selected-item"
+                      key={`selected-item-${index}`}
+                      {...getSelectedItemProps({
+                          selectedItem: selectedItemForRender,
+                          index,
+                      })}
+                      >
+                      {selectedItemForRender.title}
+                      <span
+                          className="px-1 cursor-pointer"
+                          onClick={e => {
+                          e.stopPropagation()
+                          removeSelectedItem(selectedItemForRender)
+                          }}
+                      >
+                          &#10005;
+                      </span>
+                      </span>
+              )
+            })}
+            <div className="flex gap-0.5 grow" {...getComboboxProps()}>
+              <input
+                placeholder={selectTitle}
+                className="w-full"
+                {...getInputProps(getDropdownProps({preventKeyAction: isOpen}))}
+              />
+              <button
+                aria-label="toggle menu"
+                className="multiselect-filter-button"
+                type="button"
+                {...getToggleButtonProps()}
+              >
+                <ChevronDownIcon />
+              </button>
+            </div>
+          </div>
+          {renderMultiSelectContainer()}
         </div>
       )
     }

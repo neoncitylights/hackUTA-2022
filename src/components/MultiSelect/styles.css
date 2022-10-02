@@ -1,27 +1,36 @@
-.multiselect {
-
-}
-
 .multiselect-input {
-    display: inline-flex;
+	display: inline-flex;
 	padding: .25rem .75rem;
-	background: #cee7fe;
-	border: 1px solid #0090ff;
+	background: #fff;
+	border: 1px solid #ccc;
 	border-radius: 1rem;
 	font-size: .875rem;
 	flex-direction: column;
 }
 
+.multiselect-filter-button {
+	-webkit-appearance: none;
+	appearance: none;
+	display: flex;
+	gap: .5rem;
 
-.selected-items {
-    
+}
+
+.multiselect-container {
+	display: inline-flex;
+	padding: .25rem .75rem;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 1rem;
+	font-size: .875rem;
+	flex-direction: column;
 }
 
 .selected-item {
 	display: inline-flex;
 	padding: .25rem .75rem;
-	background: #cee7fe;
-	border: 1px solid #0090ff;
+	background: #fff;
+	border: 1px solid #ccc;
 	border-radius: 1rem;
 	font-size: .875rem;
 }
