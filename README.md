@@ -1,4 +1,10 @@
-# Getting Started with Create React App
+# Datageddon
+[DevPost](https://devpost.com/software/r-d-data-inventory) | [HackUTA 2022](https://hackuta2022.devpost.com/)
+
+> _In the world of data engineering tools for open source machine learning engineers, there is no effective tool that acts as a search engine for various open source data sets. There is also no effective tool to remind machine learning engineers about datasets being modified. Our goal with DataGeddon is to solve these problems and have a scalable and practical solution._
+
+This HackUTA 2022 project was created together by [@chandrasd](https://github.com/chandrasd), [@hoaihdinh](https://github.com/hoaihdinh), [@SPGoding](https://github.com/SPGoding), and [@neoncitylights](https://github.com/neoncitylights).
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
